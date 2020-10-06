@@ -1,0 +1,49 @@
+version: "3"
+
+services:
+    app:
+        image: productorGps:1.0
+        # build:
+        #     dockerfile: ./buildDocker/local.DockerFile
+        #     context: .
+        ports:
+            - 2048:2048
+        hostname: robotGps
+        container_name: rb-productor-js
+        restart: always
+        environment:
+            - TZ=America/Lima
+        volumes:
+            # - ./:/usr/local/nodeapps/
+            - /usr/local/volumes/robotgps:/root/.pm2/logs
+        depends_on:
+            - rabbitmq
+            # - redisDC
+        command: pm2-runtime server.config.js --env development
+        # command: pm2-runtime server.config.js --env production
+
+    rabbitmq:
+        image: rabbitmq:3.8.1-management
+        hostname: rabbitgps
+        container_name: rabbbit-productor
+        restart: always
+        ports:
+            - 5672:5672
+            - 15672:15672
+        environment:
+            - RABBITMQ_DEFAULT_USER=admin
+            - RABBITMQ_DEFAULT_PASS=admin
+            - RABBITMQ_DEFAULT_VHOST=/
+            - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit channel_max 50000
+            - TZ=America/Lima
+        volumes:
+            - /usr/local/volumes/rabbitmq:/var/lib/rabbitmq/mnesia/
+    # redisDC:
+    #     image: redis:latest
+    #     environment:
+    #         - TZ=America/Lima
+    #     ports:
+    #         - "6379:6379"
+    #     volumes:
+    #         - /usr/local/volumes/redis:/data
+    #     restart: always
