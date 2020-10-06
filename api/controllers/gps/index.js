@@ -10,7 +10,7 @@ const postGps = async (req, res) => {
     try {
         log.info(`INICIO : ${fechaInicio}`);
         arregloJson = req.body;
-        await rabbitmq.publishRabbitMq("exchange_gps", JSON.stringify(bodyJsonQueue));
+        await rabbitmq.publishRabbitMq("exchange_gps", JSON.stringify(arregloJson));
         res.json({ codRes: "00", message: "OK" })
     } catch (error) {
         res.json({
